@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #define FALSE 0
 #define TRUE 1
 
@@ -15,7 +15,7 @@
 
 #define WIDTH 96
 #define LENGTH 128
-#define NUM_ROUNDS 200
+#define NUM_ROUNDS 2700 
 
 typedef struct
 {
@@ -191,16 +191,17 @@ int main(int argc, char **argv)
                 MPI_Gather(&player, 1, mpi_player, &players, 1, mpi_player, 0, reporting_comm);
                 if (isFP0(worldRank)) 
                 {
-                    printf("Round: %d\n", round);
-                    printf("Ball: %d %d\n", ball.x, ball.y);
-                    // printPlayerInfo(players);
+                    printf("%d\n", round);
+                    printf("%d %d\n", ball.x, ball.y);
+                    printPlayerInfo(players);
                 }
             }
 
             MPI_Barrier(MPI_COMM_WORLD);
         }
+	if (DEBUG) if (isFP0(worldRank)) printf("Half-time score: A %d:%d B\n", Ascore, Bscore);
     }
-    if (isFP0(worldRank)) printf("Final score: A %d:%d B\n", Ascore, Bscore);
+    if (DEBUG) if (isFP0(worldRank)) printf("Final score: A %d:%d B\n", Ascore, Bscore);
     
     MPI_Comm_free(&subfield_comm);
     MPI_Comm_free(&reporting_comm);
@@ -213,6 +214,8 @@ void initField(int worldRank, int* goalA, int* goalB, pos* ball)
     // Goals will be swapped after this (i.e. goalA = LEFT, goalB = RIGHT)
     *goalA = RIGHT_GOAL;
     *goalB = LEFT_GOAL;
+    *goalA = LEFT_GOAL;
+    *goalB = RIGHT_GOAL;
 
     if (isFieldProcess(worldRank)) 
     {
@@ -480,19 +483,19 @@ void printPlayerInfo(football_player player[23])
     {
         if (player[p].id > 11 && player[p].id < 23)
         {
-            printf("id: %d; ", player[p].id - 12);
+            printf("%d ", player[p].id - 12);
         }
         if (player[p].id > 22 && player[p].id < 34)
         {
-            printf("id: %d; ", player[p].id - 23);
+            printf("%d ", player[p].id - 23);
         }
         if (player[p].id > 11) 
         {
-            printf("initial: %d, %d; ", player[p].initial.x, player[p].initial.y);
-            printf("final: %d %d; ", player[p].final.x, player[p].final.y);
-            printf("reached: %d; ", player[p].reached);
-            printf("kicked: %d; ", player[p].kicked);
-            printf("challenge: %d; ", player[p].challenge);
+            printf("%d %d ", player[p].initial.x, player[p].initial.y);
+            printf("%d %d ", player[p].final.x, player[p].final.y);
+            printf("%d ", player[p].reached);
+            printf("%d ", player[p].kicked);
+            printf("%d ", player[p].challenge);
             printf("\n");
         }
     }
@@ -508,12 +511,12 @@ void printFieldGroups(int worldRank, int worldSize, MPI_Comm subfield_comm)
 
 void startHalf(int worldRank, football_player* player) 
 {
-    player->id = worldRank;
+    pos target;
+    getRandomPos(worldRank, &target);
+    player->final.x = target.x;
+    player->final.y = target.y;
     player->initial.x = player->final.x;
     player->initial.y = player->final.y;
-    player->kicked = 0;
-    player->reached = 0;
-    player->challenge = -1;
     
 }
 

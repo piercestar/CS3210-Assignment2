@@ -7,7 +7,7 @@
 #define LENGTH 128
 #define NUM_ROUNDS 900
 #define COUNT_1 1
-#define DEBUG 1
+#define DEBUG 0
 
 typedef struct
 {
@@ -72,8 +72,8 @@ int main(int argc, char **argv)
             football_player players[num_p];     // array for storing player data
 
             // start new round
-            printf("Round: %d\n", round);
-            printf("Ball: %d, %d\n", ball.x, ball.y);
+            printf("%d\n", round);
+            printf("%d %d\n", ball.x, ball.y);
 
             // Send out new ball position
             for (p = 0; p < num_p; p++) 
@@ -171,14 +171,14 @@ void initialize(pos* ball, football_player* player, int rank)
 
 void print_player_data(football_player player, int has_reached, int has_kicked) 
 {
-    printf("Player %d; ", player.id);
-    printf("init_pos: %d, %d; ", player.initial.x, player.initial.y);
-    printf("final_pos: %d, %d; ", player.final.x, player.final.y);
-    printf("has_reached: %d; ", has_reached);
-    printf("has_kicked: %d; ", has_kicked);
-    printf("total_ran: %d; ", player.ran);
-    printf("total_reached: %d; ", player.reached);
-    printf("total_kicked: %d; ", player.kicked);
+    printf("%d ", player.id);
+    printf("%d %d ", player.initial.x, player.initial.y);
+    printf("%d %d ", player.final.x, player.final.y);
+    printf("%d ", has_reached);
+    printf("%d ", has_kicked);
+    printf("%d ", player.ran);
+    printf("%d ", player.reached);
+    printf("%d ", player.kicked);
     printf("\n");
 }
 
